@@ -5,4 +5,8 @@ from gomokuAgent import GomokuAgent
 
 class Player(GomokuAgent):
     def move(self, board):
-        return board;
+        while True:
+            moveLoc = tuple(np.random.randint(self.BOARD_SIZE, size=2))
+            print(moveLoc)
+            if legalMove(board, moveLoc):
+                return moveLoc
