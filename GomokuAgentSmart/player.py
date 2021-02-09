@@ -3,6 +3,7 @@ import numpy as np
 from misc import legalMove
 from misc import rowTest
 from misc import diagTest
+from misc import winningTest
 from gomokuAgent import GomokuAgent
 
 class Player(GomokuAgent):
@@ -25,9 +26,7 @@ class Player(GomokuAgent):
                 if legalMove(tempBoard, check):
                     
                     tempBoard[check] = self.ID
-                    if(rowTest(self.ID, tempBoard, self.X_IN_A_LINE)):
-                        return check
-                    if(diagTest(self.ID, tempBoard, self.X_IN_A_LINE)):
+                    if(winningTest(self.ID, tempBoard, self.X_IN_A_LINE)):
                         return check
                     print("test")
         return False
