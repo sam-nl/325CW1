@@ -18,8 +18,8 @@ class Player(GomokuAgent):
     
     #check if there is a move that will win the game and return it else return false
     def getWinningMove(self,board):
-        for i in range(BOARD_SIZE):
-            for j in range(BOARD_SIZE):
+        for i in range(self.BOARD_SIZE):
+            for j in range(self.BOARD_SIZE):
                 check = (i,j)
                 tempBoard = board
                 if legalMove(tempBoard, check):
