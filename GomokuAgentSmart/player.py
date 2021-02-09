@@ -27,7 +27,6 @@ class Player(GomokuAgent):
                     tempBoard[check] = self.ID
                     if(winningTest(self.ID, tempBoard, self.X_IN_A_LINE)):
                         return check
-                    print("TEMP")
-                    print(tempBoard)
+                    tempBoard = board
         return False
   
