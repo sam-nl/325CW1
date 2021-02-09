@@ -28,6 +28,6 @@ class Player(GomokuAgent):
                     if(winningTest(self.ID, tempBoard, self.X_IN_A_LINE)):
                         return check
                     
-                    print("@@TEMP@@: " + tempBoard)
+                    print("TEMP: " + tempBoard)
         return False
   
