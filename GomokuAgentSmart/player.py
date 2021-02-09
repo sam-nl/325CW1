@@ -24,10 +24,10 @@ class Player(GomokuAgent):
                 check = (i,j)
                 tempBoard = board
                 if legalMove(tempBoard, check):
-                    
                     tempBoard[check] = self.ID
                     if(winningTest(self.ID, tempBoard, self.X_IN_A_LINE)):
                         return check
-                    print("test")
+                    
+                    print("@@TEMP@@: " + tempBoard)
         return False
   
