@@ -7,7 +7,7 @@ from gomokuAgent import GomokuAgent
 
 class Player(GomokuAgent):
     def move(self, board):
-        win = self.getWinningMove(self,board)
+        win = self.getWinningMove(board)
         if(win):
             return win
         while True:
