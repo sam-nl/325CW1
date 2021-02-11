@@ -7,6 +7,7 @@ from misc import winningTest
 from gomokuAgent import GomokuAgent
 
 class Player(GomokuAgent):
+    
     def move(self, board):
         win = self.getWinningMove(board)
         if(win):
@@ -16,6 +17,22 @@ class Player(GomokuAgent):
             print(moveLoc)
             if legalMove(board, moveLoc):
                 return moveLoc
+            
+    def countRows(self,board):
+        count2P = 0;
+        count2U = 0
+        for i in range(self.BOARD_SIZE):
+            for j in range(self.BOARD_SIZE):
+                flag = True
+                for i in range(X_IN_A_LINE):
+                    if board[r,c+i] != playerID:
+                        flag = False
+                        break
+                if flag:
+                    return True
+
+    return [count2P,count2U]    
+                
     
     #check if there is a move that will win the game and return it else return false
     def getWinningMove(self,board):
