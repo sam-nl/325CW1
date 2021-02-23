@@ -26,9 +26,9 @@ class Player(GomokuAgent):
             t = time()
 
             moveLoc = self.minimaxroot(1, board, is_max)
-
-            print(time() - t)
-
+            print("Move loc: ", moveLoc)
+            print("Time taken to get move location: ", time() - t)
+            print("board move loc: ", board[moveLoc])
             if legalMove(board, moveLoc):
                 return moveLoc
 
