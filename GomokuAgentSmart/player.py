@@ -21,7 +21,7 @@ class Player(GomokuAgent):
         while True:
             # calculate best move location, if legal, return move location
             # call minimax root function to do this
-            moveLoc = self.minimaxroot(1, board, is_max)
+            moveLoc = self.minimaxroot(self, 1, board, is_max)
             if legalMove(board, moveLoc):
                 return moveLoc
 
