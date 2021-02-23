@@ -5,6 +5,7 @@ from misc import rowTest
 from misc import diagTest
 from misc import winningTest
 from gomokuAgent import GomokuAgent
+from time import time
 
 
 class Player(GomokuAgent):
@@ -18,10 +19,16 @@ class Player(GomokuAgent):
 
     def move(self, board):
         is_max = True
+
         while True:
             # calculate best move location, if legal, return move location
             # call minimax root function to do this
-            moveLoc = self.minimaxroot(self, 1, board, is_max)
+            t = time()
+
+            moveLoc = self.minimaxroot(1, board, is_max)
+
+            print(time() - t)
+
             if legalMove(board, moveLoc):
                 return moveLoc
 
