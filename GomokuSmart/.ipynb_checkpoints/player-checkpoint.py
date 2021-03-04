@@ -145,8 +145,8 @@ class node:
     #gets the score of a move, this is the effect the most recent move has on the score
     def get_score(self):
         p_3 = 10
-        u_3 = 50
-        p_4 = 100
+        u_3 = 100
+        p_4 = 1000
         u_4 = 20000
         score_5 = 50000
         score = 0
