@@ -26,7 +26,7 @@ class Player(GomokuAgent):
             self.current_node = self.get_node(op_move)          
         self.board = board.copy()
         self.current_node.order_children()
-        move_loc = (self.current_node.minimaxroot(4))               #grow the tree under the current board state
+        move_loc = (self.current_node.minimaxroot(3))               #grow the tree under the current board state
         #move_loc = (self.current_node.minimaxroot(5))
         if not self.is_set:
             self.is_set = True
