@@ -266,9 +266,9 @@ class node:
         time_out = time()
         while not self.child_queue.empty() and time()-time_out< 4:
             child = self.child_queue.get()
-            print(child)
-            child = child[3]
-            print(child.move_pos)
+            #print(child)
+            #child = child[3]
+            #print(child.move_pos)
             if (child.player_id == 1):
                 temp_score = max(best_move_score,child.minimax(depth-1,-99999,99999))
                 if (temp_score > best_move_score): 
