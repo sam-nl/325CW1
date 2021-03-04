@@ -82,7 +82,7 @@ class node: #represents a board position in the tree
         self.p_score = 0
         if parent == None:                                       #if no parent(root) initialise tree (run once per game)
             self.score = 0
-            self.player_id = ID
+            self.player_id = -ID
             self.depth = 0
             self.empty_pieces = []
             for row in range(len(board)):
