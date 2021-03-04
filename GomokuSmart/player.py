@@ -299,7 +299,7 @@ class node:
                         return best_move_location
         return best_move_location
     
-    #the minimax algorithm, limited to the 5 best children to increase speed
+    #the minimax algorithm, limited to the 8 best children to increase speed
     def minimax(self,depth, alpha, beta):
         if depth <= 0:
             return self.score + self.p_score
