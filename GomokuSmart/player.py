@@ -67,7 +67,7 @@ class Player(GomokuAgent):
                 return my_first_move                                #return our first move, or next to it if that is taken
             else:
                 return (self.centre-1,self.centre)
-class node: #represents a board position in the tree
+class node:      
     count = 0
     def __init__(self, move_pos, parent = None, ID = None, board = None, heur = False):
         self.minimax_score = None
@@ -82,7 +82,7 @@ class node: #represents a board position in the tree
         self.p_score = 0
         if parent == None:                                       #if no parent(root) initialise tree (run once per game)
             self.score = 0
-            self.player_id = -ID
+            self.player_id = ID
             self.depth = 0
             self.empty_pieces = []
             for row in range(len(board)):
@@ -106,25 +106,23 @@ class node: #represents a board position in the tree
             self.score = self.parent.score + self.score_dif
         
     def order_children(self):
-        self.child_queue = PriorityQueue()
-        temp_queue = PriorityQueue()
-        count = 0
-        if self.children == []:
-            for blank in self.empty_pieces:
-                heu = self.heuristic(blank)
-                if heu > 0:
-                    middle_pref = abs(blank[0]-5) + abs(blank[1]-5)
-                    child = node(blank, self, heur = heu)
-                    self.children.append(child)
-        for c in self.children:
-            count += 1
-            middle_pref = abs(c.move_pos[0]-5) + abs(c.move_pos[1]-5)
-            temp_queue.put((-c.player_id*abs(c.p_score),c.player_id*(abs(c.score)),-c.heu,middle_pref,count,c))
-        for i in range(16):
-            if not temp_queue.empty():
-                temp = temp_queue.get()
-                self.child_queue.put(temp)
-                    
+        if self.child_queue.empty():
+            count = 0
+            if self.children == []:
+                for blank in self.empty_pieces:
+                    count -= 1
+                    heu = self.heuristic(blank)
+                    if heu > 0:
+                        middle_pref = abs(blank[0]-5) + abs(blank[1]-5)
+                        child = node(blank, self, heur = heu)  
+                        self.children.append(child)
+                        self.child_queue.put((child.player_id*(heu+abs(child.score)+abs(child.p_score)),middle_pref,count,child))
+            else:
+                for child in self.children:
+                    count -= 1
+                    middle_pref = abs(child.move_pos[0]-5) + abs(child.move_pos[1]-5)
+                    self.child_queue.put((child.player_id*(child.heu+abs(child.score)+abs(child.p_score)),middle_pref,count,child))
+        
     def heuristic(self, coords):
         score = 0
         for x in range(-1,2):
@@ -185,6 +183,7 @@ class node: #represents a board position in the tree
                 return (self.board[next_place],next_place)
             except:
                 return (2,next_place)
+    
     def evaluate(self):
         lines_made = []
         lines_removed = []
@@ -216,7 +215,7 @@ class node: #represents a board position in the tree
                                 middle = True                                  #not 2 length 2s
                                 end2 = self.get_next(end2[1],(-x,-y))
                                 length+=1
-                                while end2[0] == cur_id:                                    
+                                while end2[0] == cur_id:
                                     end2 = self.get_next(end2[1],(-x,-y))
                                     length += 1
                             else:
@@ -228,13 +227,12 @@ class node: #represents a board position in the tree
                                     b_end2 = self.get_next(end2[1],(-x,-y))
                                     b_len += 1
                                 b_end2 = self.get_next(end2[1],(-x,-y))
-
                                 if end1[0] == 0:
                                     open_ends+=1
                                 if end2[0] == 0:
                                     open_ends+=1
                                 lines_prevented.append((b_len,open_ends,cur_id))
-                                open_ends = 0
+                                open_ends = 0  
 
                         if end1[0] == 0:
                             open_ends+=1
@@ -259,7 +257,7 @@ class node: #represents a board position in the tree
     def minimaxroot(self, depth):
         best_move_location = (0, 0)
         current_score = self.score
-        if self.player_id == 1:
+        if self.player_id == -1:
             best_move_score = -99999
         else:
             best_move_score = 99999
@@ -267,35 +265,35 @@ class node: #represents a board position in the tree
         time_out = time()
         while not self.child_queue.empty() and time()-time_out< 4:
             child = self.child_queue.get()
-            #print(child)
-            #print(child[5].move_pos)
-            child = child[5]
-            #print(child.evaluate())
-            if (self.player_id == 1):
-                #print("maxing score:")
+            child = child[3]
+            if (child.player_id == 1):
                 temp_score = max(best_move_score,child.minimax(depth-1,-99999,99999))
                 if (temp_score > best_move_score): 
                     best_move_location = child.move_pos;
                     best_move_score = temp_score
+                    if child.score >= 10000:
+                        return best_move_location
                     
             else:
-                #print("mining score:")
                 temp_score = min(best_move_score,child.minimax(depth-1,-99999,99999))
                 if (temp_score < best_move_score):
                     best_move_location = child.move_pos;
                     best_move_score = temp_score
-            #print(child.minimax_score)     
+                    if child.score <= -10000:
+                        return best_move_location
         return best_move_location
     
     def minimax(self,depth, alpha, beta):
         if depth <= 0:
             return self.score + self.p_score
         self.order_children()
-        best_move_score = -99999*self.player_id
-        while not self.child_queue.empty():
+        best_move_score = 99999*self.player_id
+        count = 10
+        while not self.child_queue.empty() and count>0:
+            count -= 1
             child = self.child_queue.get()
-            child = child[5]
-            if child.player_id == -1:
+            child = child[3]
+            if child.player_id == 1:
                 self.minimax_score = child.minimax(depth-1, alpha,beta)
                 best_move_score = max(best_move_score,self.minimax_score)
                 alpha = max(alpha, best_move_score)
