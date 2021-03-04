@@ -279,7 +279,7 @@ class node:
             best_move_score = 99999
         self.order_children()
         time_out = time()
-        while not self.child_queue.empty() and time()-time_out< 4:
+        while not self.child_queue.empty() and time()-time_out< 3:
             child = self.child_queue.get()
             child = child[3]
             if (child.player_id == 1):
@@ -305,7 +305,7 @@ class node:
             return self.score + self.p_score
         self.order_children()
         best_move_score = 99999*self.player_id
-        count = 5
+        count = 8
         while not self.child_queue.empty() and count>0:
             count -= 1
             child = self.child_queue.get()
