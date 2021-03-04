@@ -293,7 +293,7 @@ class node:
             return self.score + self.p_score
         self.order_children()
         best_move_score = 99999*self.player_id
-        count = 6
+        count = 5
         while not self.child_queue.empty() and count>0:
             count -= 1
             child = self.child_queue.get()
