@@ -267,14 +267,14 @@ class node:
         while not self.child_queue.empty() and time()-time_out< 4:
             child = self.child_queue.get()
             #print(child)
-            #child = child[3]
+            child = child[3]
             #print(child.move_pos)
             if (child.player_id == 1):
                 temp_score = max(best_move_score,child.minimax(depth-1,-99999,99999))
                 if (temp_score > best_move_score): 
                     best_move_location = child.move_pos;
                     best_move_score = temp_score
-                    print(child.p_score)
+                    #print(child.p_score)
                     if child.p_score >= 10000:
                         return best_move_location
                     
@@ -283,7 +283,7 @@ class node:
                 if (temp_score < best_move_score):
                     best_move_location = child.move_pos;
                     best_move_score = temp_score
-                    print(child.p_score)
+                    #print(child.p_score)
                     if child.p_score <= -10000:
                         return best_move_location
         return best_move_location
