@@ -106,22 +106,22 @@ class node:
             self.score = self.parent.score + self.score_dif
         
     def order_children(self):
-        if self.child_queue.empty():
-            count = 0
-            if self.children == []:
-                for blank in self.empty_pieces:
-                    count -= 1
-                    heu = self.heuristic(blank)
-                    if heu > 0:
-                        middle_pref = abs(blank[0]-5) + abs(blank[1]-5)
-                        child = node(blank, self, heur = heu)  
-                        self.children.append(child)
-                        self.child_queue.put((child.player_id*(heu+abs(child.score)+abs(child.p_score)),middle_pref,count,child))
-            else:
-                for child in self.children:
-                    count -= 1
-                    middle_pref = abs(child.move_pos[0]-5) + abs(child.move_pos[1]-5)
-                    self.child_queue.put((child.player_id*(child.heu+abs(child.score)+abs(child.p_score)),middle_pref,count,child))
+        self.child_queue = PriorityQueue()
+        count = 0
+        if self.children == []:
+            for blank in self.empty_pieces:
+                count -= 1
+                heu = self.heuristic(blank)
+                if heu > 0:
+                    middle_pref = abs(blank[0]-5) + abs(blank[1]-5)
+                    child = node(blank, self, heur = heu)  
+                    self.children.append(child)
+                    self.child_queue.put((child.player_id*(heu+abs(child.score)+abs(child.p_score)),middle_pref,count,child))
+        else:
+            for child in self.children:
+                count -= 1
+                middle_pref = abs(child.move_pos[0]-5) + abs(child.move_pos[1]-5)
+                self.child_queue.put((child.player_id*(child.heu+abs(child.score)+abs(child.p_score)),middle_pref,count,child))
         
     def heuristic(self, coords):
         score = 0
@@ -271,7 +271,7 @@ class node:
                 if (temp_score > best_move_score): 
                     best_move_location = child.move_pos;
                     best_move_score = temp_score
-                    if child.score >= 10000:
+                    if child.p_score >= 10000:
                         return best_move_location
                     
             else:
@@ -288,7 +288,7 @@ class node:
             return self.score + self.p_score
         self.order_children()
         best_move_score = 99999*self.player_id
-        count = 10
+        count = 8
         while not self.child_queue.empty() and count>0:
             count -= 1
             child = self.child_queue.get()
