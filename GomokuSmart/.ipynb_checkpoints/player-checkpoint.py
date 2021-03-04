@@ -67,6 +67,7 @@ class Player(GomokuAgent):
                 return my_first_move                                #return our first move, or next to it if that is taken
             else:
                 return (self.centre-1,self.centre)
+
 class node:      
     count = 0
     def __init__(self, move_pos, parent = None, ID = None, board = None, heur = False):
@@ -173,7 +174,7 @@ class node:
                 if i[1] == 1:
                     self.p_score -= u_3*i[2]
                 elif i[1] == 2:
-                    self.p_score -= u_4*i[2]
+                    self.p_score -= u_3*i[2]
                 
             elif i[0] == 4:
                 self.p_score -= u_4*i[2]
@@ -286,7 +287,7 @@ class node:
                 if (temp_score < best_move_score):
                     best_move_location = child.move_pos;
                     best_move_score = temp_score
-                    print(child.p_score)
+                    #print(child.p_score)
                     if child.p_score <= -10000:
                         return best_move_location
         return best_move_location
