@@ -15,7 +15,9 @@ class Player(GomokuAgent):
         self.current_node = None
         self.is_set = False
         self.centre = int(BOARD_SIZE/2)
-        
+    
+    
+    # main method that takes the board and returns the best move
     def move(self,board):
         move_loc = (0,0)
         if not self.is_set:                                         #if it is our first turn we must initialise
@@ -26,8 +28,7 @@ class Player(GomokuAgent):
             self.current_node = self.get_node(op_move)          
         self.board = board.copy()
         self.current_node.order_children()
-        move_loc = (self.current_node.minimaxroot(3))               #grow the tree under the current board state
-        #move_loc = (self.current_node.minimaxroot(5))
+        move_loc = (self.current_node.minimaxroot(4))               #grow the tree under the current board state
         if not self.is_set:
             self.is_set = True
             self.current_node = self.get_node(first_move)
@@ -37,13 +38,15 @@ class Player(GomokuAgent):
             self.current_node = self.get_node(move_loc)
             self.board[move_loc] = self.ID
             return move_loc
-                        
+      
+    #finds the opp's move by getting the difference in the board before and after their move
     def get_op_move(self,board):
         diff = board-self.board
         diff_arr = np.stack(np.nonzero(diff),axis= -1)
         op_move = (diff_arr[0][0],diff_arr[0][1])
         return op_move
-        
+    
+    #find a node in the tree, if it doesnt exist it makes it
     def get_node(self, move_loc):                                   #check if the node is in the tree (it is one of our predicted moves)
         for child in self.current_node.children:
             if child.move_pos == move_loc:
@@ -52,6 +55,7 @@ class Player(GomokuAgent):
         self.current_node.children.append(child)
         return child
     
+    #called only on the first move, used to make the root
     def first_move(self,_board):                                    #initialises the root and makes the first move 
         my_first_move = (self.centre,self.centre)
         if not np.count_nonzero(_board):                            #the root is our move if the board is empty
@@ -68,6 +72,7 @@ class Player(GomokuAgent):
             else:
                 return (self.centre-1,self.centre)
 
+#represents a board state
 class node:      
     count = 0
     def __init__(self, move_pos, parent = None, ID = None, board = None, heur = False):
@@ -105,7 +110,8 @@ class node:
             self.board[self.move_pos] = self.player_id              #the nodes' board is one piece different to the parent'
             self.score_dif = self.get_score()
             self.score = self.parent.score + self.score_dif
-        
+     
+    #orders the priority of children base on how promising they seem
     def order_children(self):
         self.child_queue = PriorityQueue()
         count = 0
@@ -123,7 +129,8 @@ class node:
                 count -= 1
                 middle_pref = abs(child.move_pos[0]-5) + abs(child.move_pos[1]-5)
                 self.child_queue.put((child.player_id*(child.heu+abs(child.score)+abs(child.p_score)),middle_pref,count,child))
-        
+    
+    #returns a higher number the more pieces are near to a position
     def heuristic(self, coords):
         score = 0
         for x in range(-1,2):
@@ -135,6 +142,7 @@ class node:
                     pass
         return score
     
+    #gets the score of a move, this is the effect the most recent move has on the score
     def get_score(self):
         p_3 = 10
         u_3 = 50
@@ -181,7 +189,8 @@ class node:
             elif i[0] == 5:
                 self.p_score -= score_5*i[2]
         return score
-        
+    
+    #gets the next element in a direction, if its a side it returns 2
     def get_next(self,pos,direction):                       #returns the id and position of the next cell in the line in tuple
             try:
                 next_place = (pos[0]+direction[0],pos[1]+direction[1])
@@ -189,6 +198,7 @@ class node:
             except:
                 return (2,next_place)
     
+    #calculated how many lines were made and blocked by the most recent move
     def evaluate(self):
         lines_made = []
         lines_removed = []
@@ -259,6 +269,7 @@ class node:
                             end_list.append(end2)
         return (lines_made,lines_removed,lines_prevented)
     
+    #go through immediate children in order of most promising, if it finds a child with a very good score it chooses that, else chooses the best
     def minimaxroot(self, depth):
         best_move_location = (0, 0)
         current_score = self.score
@@ -270,15 +281,12 @@ class node:
         time_out = time()
         while not self.child_queue.empty() and time()-time_out< 4:
             child = self.child_queue.get()
-            #print(child)
             child = child[3]
-            #print(child.move_pos)
             if (child.player_id == 1):
                 temp_score = max(best_move_score,child.minimax(depth-1,-99999,99999))
                 if (temp_score > best_move_score): 
                     best_move_location = child.move_pos;
                     best_move_score = temp_score
-                    #print(child.p_score )
                     if child.p_score >= 10000:
                         return best_move_location
                     
@@ -287,17 +295,17 @@ class node:
                 if (temp_score < best_move_score):
                     best_move_location = child.move_pos;
                     best_move_score = temp_score
-                    #print(child.p_score)
                     if child.p_score <= -10000:
                         return best_move_location
         return best_move_location
     
+    #the minimax algorithm, limited to the 5 best children to increase speed
     def minimax(self,depth, alpha, beta):
         if depth <= 0:
             return self.score + self.p_score
         self.order_children()
         best_move_score = 99999*self.player_id
-        count = 6
+        count = 5
         while not self.child_queue.empty() and count>0:
             count -= 1
             child = self.child_queue.get()
